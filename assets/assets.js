@@ -170,8 +170,8 @@ export const productsDummyData = [
     "userId": "user_2sZFHS1UIIysJyDVzCpQhUhTIhw",
     "name": "AESPA Karina - Bubble Sticker",
     "description": "Show off your love for AESPA with this vibrant Karina - Bubble Sticker! Featuring a high-quality print of Karina from the Bubble concept, this sticker is perfect for decorating laptops, phone cases, notebooks, and more. Durable, waterproof, and easy to apply, it’s a must-have for any MY (AESPA fan) looking to add a touch of K-pop flair to their collection.",
-    "price": 2.99,
-    "offerPrice": 1,
+    "price": 75,
+    "offerPrice": 55,
     "image": [
       "https://i.ibb.co/bRJ8LPw1/BUBBLE-AESPA-KARINA.png"
     ],
@@ -185,8 +185,8 @@ export const productsDummyData = [
     "userId": "user_2sZFHS1UIIysJyDVzCpQhUhTIhw",
     "name": "AESPA Winter - Bubble Sticker",
     "description": "Add some cool vibes to your gear with the Winter – Bubble Sticker from AESPA! This high-resolution sticker captures Winter's chic visuals from the Bubble era, designed to elevate any notebook, gadget, or surface. It's waterproof, durable, and ultra-cute—perfect for fans who want to stay close to their bias every day.",
-    "price": 2.99,
-    "offerPrice": 1,
+    "price": 75,
+    "offerPrice": 55,
     "image": [
       "https://i.ibb.co/ZpRFgRWY/BUBBLE-AESPA-WINTER.png"
     ],
@@ -200,8 +200,8 @@ export const productsDummyData = [
     "userId": "user_2sZFHS1UIIysJyDVzCpQhUhTIhw",
     "name": "AESPA Ningning - Bubble Sticker",
     "description": "Brighten your day with the radiant NingNing – Bubble Sticker! Featuring her stunning Bubble look, this sticker delivers vibrant energy and style. Whether you’re personalizing your journal or phone case, this waterproof and durable sticker adds a fun, fangirl-worthy flair to any surface.",
-    "price": 2.99,
-    "offerPrice": 1,
+    "price": 75,
+    "offerPrice": 55,
     "image": [
       "https://i.ibb.co/bgC9ktFM/BUBBLE-AESPA-NINGNING.png"
     ],
@@ -215,8 +215,8 @@ export const productsDummyData = [
     "userId": "user_2sZFHS1UIIysJyDVzCpQhUhTIhw",
     "name": "AESPA Giselle - Bubble Sticker",
     "description": "Bring a touch of bold charisma to your space with the Giselle – Bubble Sticker! Styled from her standout visuals in the Bubble concept, this sticker is a striking addition to your collection. Stick it on your phone, laptop, or anywhere you want a pop of AESPA energy. Long-lasting and waterproof for everyday use.",
-    "price": 2.99,
-    "offerPrice": 1,
+    "price": 75,
+    "offerPrice": 55,
     "image": [
       "https://i.ibb.co/VpPHf552/BUBBLE-AESPA-GISELLE.png"
     ],
@@ -230,8 +230,8 @@ export const productsDummyData = [
     "userId": "user_2sZFHS1UIIysJyDVzCpQhUhTIhw",
     "name": "BTS Jin – Photocard Set",
     "description": "Worldwide Handsome is here! 💜 Collect and cherish every charming moment of Jin with this exclusive BTS Jin – Photocard Set. Featuring a handpicked selection of high-quality prints from various BTS eras, this set is a visual feast for every true ARMY. Perfect for decorating your phone case, journals, top loaders, or trading with fellow fans! Each card is made with thick, glossy material for long-lasting shine and durability. A must-have for any Jin-biased collector!",
-    "price": 4.99,
-    "offerPrice": 2.68,
+    "price": 268,
+    "offerPrice": 150,
     "image": [
       "https://i.ibb.co/p66mqDF0/1.jpg",
       "https://i.ibb.co/TqvXyy9S/2.jpg"
@@ -246,8 +246,8 @@ export const productsDummyData = [
     "userId": "user_2sZFHS1UIIysJyDVzCpQhUhTIhw",
     "name": "BTS – Group Banner Edition",
     "description": "Show your everlasting love for the Kings of K-pop with the BTS – Group Banner Edition! This banner features a stunning, high-resolution print of all seven members—RM, Jin, SUGA, j-hope, Jimin, V, and Jungkook—capturing their iconic visuals and legendary presence. Whether you're decorating your wall, bringing it to a fan event, or using it as a backdrop for your bias shrine, this premium-quality banner is a must-have for every ARMY. Crafted with durable fabric and vibrant colors, it’s lightweight, foldable, and ready to travel wherever your BTS heart goes.",
-    "price": 7.99,
-    "offerPrice": 5.89,
+    "price": 430,
+    "offerPrice": 330,
     "image": [
       "https://i.ibb.co/XmZbrLZ/31.jpg",
       "https://i.ibb.co/hRc8Z28b/30.jpg"
@@ -262,8 +262,8 @@ export const productsDummyData = [
     "userId": "user_2sZFHS1UIIysJyDVzCpQhUhTIhw",
     "name": "V Banner – FRIENDS",
     "description": "Celebrate friendship and your K-pop bias with this stylish V Banner – FRIENDS edition! Featuring a vibrant, high-quality design inspired by beloved friendship moments in K-pop culture, this banner is perfect for decorating your room, event booths, fan meets, or photo zones. Lightweight, easy to hang, and printed on premium fabric, it’s a must-have for every fan who treasures the bond between idols and fans alike.",
-    "price": 7.99,
-    "offerPrice": 5.89,
+    "price": 430,
+    "offerPrice": 330,
     "image": [
       "https://i.ibb.co/rf679MjV/22.jpg",
       "https://i.ibb.co/RGmP8tS9/21.jpg"
@@ -278,8 +278,8 @@ export const productsDummyData = [
     "userId": "user_2sZFHS1UIIysJyDVzCpQhUhTIhw",
     "name": "BOYNEXTDOOR – Brown Version LOMO Card Set ",
     "description": "Bring home the charm of BOYNEXTDOOR with the Brown Version LOMO Card Set! Featuring warm, cozy visuals of the members, this set captures their down-to-earth vibe and effortlessly cool style. Whether you're decorating, journaling, or adding to your BOYNEXTDOOR collection, these glossy mini prints are designed to stand out and stay timeless. A must-have for every ONEDOOR collecting all versions!",
-    "price": 3.99,
-    "offerPrice": 2.41,
+    "price": 235,
+    "offerPrice": 135 ,
     "image": [
       "https://i.ibb.co/Z6NGkKJ9/BROWN-VERSION-BOYNEXTDOOR-CARDS.png"
     ],
@@ -293,8 +293,8 @@ export const productsDummyData = [
     "userId": "user_2sZFHS1UIIysJyDVzCpQhUhTIhw",
     "name": "aespa – Green Version LOMO Card Set",
     "description": "Step into the digital garden with aespa’s Green Version LOMO Card Set! 🌿✨ Featuring fresh, vibrant visuals of Karina, Winter, Giselle, and Ningning, this set captures the group’s unique blend of futuristic charm and natural elegance. Whether you're decorating your room, journaling, or adding to your aespa collection, these glossy mini prints are made to stand out and last. A must-have for every MY looking to collect all versions!",
-    "price": 3.99,
-    "offerPrice": 2.41,
+    "price": 235,
+    "offerPrice": 135 ,
     "image": [
       "https://i.ibb.co/BV6wdK7V/GREEN-VERSION-AESPA-CARDS.png"
     ],
@@ -308,8 +308,8 @@ export const productsDummyData = [
     "userId": "user_2sZFHS1UIIysJyDVzCpQhUhTIhw",
     "name": "LE SSERAFIM – Pink Version LOMO Card Set",
     "description": "Fearless and fabulous! 💖 Show your love for LE SSERAFIM with this stunning LOMO Card Set featuring high-quality mini prints of your favorite members. Packed with attitude and elegance, each card captures the iconic visuals and charisma of LE SSERAFIM from their most unforgettable eras. Ideal for decorating your wall, journaling, photo displays, or sharing with fellow FEARNOTs! Made with premium glossy material for lasting color and crisp detail.",
-    "price": 3.99,
-    "offerPrice": 2.41,
+    "price": 235,
+    "offerPrice": 135 ,
     "image": [
       "https://i.ibb.co/32Y0cdq/PINK-VERSION-LESSERAFIM-CARDS.png"
     ],
@@ -342,8 +342,8 @@ export const orderDummyData = [
           "userId": "user_2sZFHS1UIIysJyDVzCpQhUhTIhw",
           "name": "AESPA Karina - Bubble Sticker",
           "description": "Show off your love for AESPA with this vibrant Karina - Bubble Sticker! Featuring a high-quality print of Karina from the Bubble concept, this sticker is perfect for decorating laptops, phone cases, notebooks, and more. Durable, waterproof, and easy to apply, it’s a must-have for any MY (AESPA fan) looking to add a touch of K-pop flair to their collection.",
-          "price": 2.99,
-          "offerPrice": 1,
+          "price": 55,
+          "offerPrice": 55,
           "image": [
             "https://i.ibb.co/bRJ8LPw1/BUBBLE-AESPA-KARINA.png"
           ],
@@ -355,7 +355,7 @@ export const orderDummyData = [
         "_id": "67a20934b3db72db5cc77b2c"
       }
     ],
-    "amount": 5.99,
+    "amount": 55,
     "address": {
       "_id": "67a1e4233f34a77b6dde9055",
       "userId": "user_2sZFHS1UIIysJyDVzCpQhUhTIhw",
@@ -381,8 +381,8 @@ export const orderDummyData = [
           "userId": "user_2sZFHS1UIIysJyDVzCpQhUhTIhw",
           "name": "AESPA Winter - Bubble Sticker",
           "description": "Add some cool vibes to your gear with the Winter – Bubble Sticker from AESPA! This high-resolution sticker captures Winter's chic visuals from the Bubble era, designed to elevate any notebook, gadget, or surface. It's waterproof, durable, and ultra-cute—perfect for fans who want to stay close to their bias every day.",
-          "price": 2.99,
-          "offerPrice": 1,
+          "price": 55,
+          "offerPrice": 55,
           "image": [
             "https://i.ibb.co/ZpRFgRWY/BUBBLE-AESPA-WINTER.png"
           ],
@@ -395,7 +395,7 @@ export const orderDummyData = [
         "_id": "67a20949b3db72db5cc77b2f"
       }
     ],
-    "amount": 5.99,
+    "amount": 55,
     "address": {
       "_id": "67a1e4233f34a77b6dde9055",
       "userId": "user_2sZFHS1UIIysJyDVzCpQhUhTIhw",
@@ -421,8 +421,8 @@ export const orderDummyData = [
           "userId": "user_2sZFHS1UIIysJyDVzCpQhUhTIhw",
           "name": "AESPA Winter - Bubble Sticker",
           "description": "Add some cool vibes to your gear with the Winter – Bubble Sticker from AESPA! This high-resolution sticker captures Winter's chic visuals from the Bubble era, designed to elevate any notebook, gadget, or surface. It's waterproof, durable, and ultra-cute—perfect for fans who want to stay close to their bias every day.",
-          "price": 2.99,
-          "offerPrice": 1,
+          "price": 55,
+          "offerPrice": 55,
           "image": [
             "https://i.ibb.co/ZpRFgRWY/BUBBLE-AESPA-WINTER.png"
           ],
@@ -435,7 +435,7 @@ export const orderDummyData = [
         "_id": "67a209bab3db72db5cc77b35"
       }
     ],
-    "amount": 5.99,
+    "amount": 55,
     "address": {
       "_id": "67a1e4233f34a77b6dde9055",
       "userId": "user_2sZFHS1UIIysJyDVzCpQhUhTIhw",
