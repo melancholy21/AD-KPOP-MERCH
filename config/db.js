@@ -17,7 +17,7 @@ async function connectDB() {
             bufferCommands: false
         };
 
-        cached.promise = mongoose.connect(`${process.env.MONGODB_URI}/AD-KPOP MERCH`, opts).then(mongoose => {
+        cached.promise = mongoose.connect(`${process.env.MONGODB_URI}/adkpopmerch`, opts).then(mongoose => {
             return mongoose
         })
     }
