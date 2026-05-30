@@ -13,15 +13,25 @@ const ProductList = () => {
 
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
+  const [searchQuery, setSearchQuery] = useState("")
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 10;
 
+  const filteredProducts = products.filter(product => 
+    product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    product.category.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   useEffect(() => {
-    const maxPage = Math.max(1, Math.ceil(products.length / ITEMS_PER_PAGE));
+    const maxPage = Math.max(1, Math.ceil(filteredProducts.length / ITEMS_PER_PAGE));
     if (currentPage > maxPage) {
       setCurrentPage(maxPage);
     }
-  }, [products, currentPage]);
+  }, [filteredProducts, currentPage]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery]);
 
   const fetchSellerProduct = async () => {
     try {
@@ -63,8 +73,8 @@ const ProductList = () => {
     fetchSellerProduct();
   }, []);
 
-  const totalPages = Math.ceil(products.length / ITEMS_PER_PAGE);
-  const paginatedProducts = products.slice(
+  const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
+  const paginatedProducts = filteredProducts.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
   );
@@ -72,7 +82,16 @@ const ProductList = () => {
   return (
     <div className="flex-1 min-h-screen flex flex-col justify-between w-full overflow-hidden">
       {loading ? <Loading /> : <div className="w-full md:p-10 p-4">
-        <h2 className="pb-4 text-lg font-medium">All Product</h2>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 max-w-4xl">
+          <h2 className="text-lg font-medium">All Products ({filteredProducts.length})</h2>
+          <input 
+            type="text" 
+            placeholder="Search products..." 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="border rounded-md px-3 py-1.5 text-xs outline-none focus:border-orange-500 w-full sm:max-w-xs"
+          />
+        </div>
         <div className="max-w-4xl w-full overflow-hidden rounded-md bg-white border border-gray-500/20">
           <div className="w-full overflow-x-auto">
             <table className="table-auto w-full min-w-[600px] sm:min-w-0">
@@ -139,8 +158,8 @@ const ProductList = () => {
             <div className="flex items-center justify-between border-t border-gray-200 px-4 py-3 bg-gray-50 text-xs sm:text-sm">
               <div className="text-gray-500">
                 Showing <span className="font-medium">{(currentPage - 1) * ITEMS_PER_PAGE + 1}</span> to{" "}
-                <span className="font-medium">{Math.min(currentPage * ITEMS_PER_PAGE, products.length)}</span> of{" "}
-                <span className="font-medium">{products.length}</span> products
+                <span className="font-medium">{Math.min(currentPage * ITEMS_PER_PAGE, filteredProducts.length)}</span> of{" "}
+                <span className="font-medium">{filteredProducts.length}</span> products
               </div>
               <div className="flex gap-2">
                 <button
