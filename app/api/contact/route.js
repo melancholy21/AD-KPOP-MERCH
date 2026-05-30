@@ -1,8 +1,19 @@
 import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
+import { rateLimit } from "@/lib/rateLimiter";
 
 export async function POST(request) {
     try {
+        // Rate limit: 3 requests per minute per IP
+        const ip = request.headers.get("x-forwarded-for") || "127.0.0.1";
+        const { isLimited } = await rateLimit(ip, 3, 60000);
+        if (isLimited) {
+            return NextResponse.json(
+                { success: false, message: "Too many contact form submissions. Please try again in a minute." },
+                { status: 429 }
+            );
+        }
+
         const { name, email, subject, message } = await request.json();
 
         if (!name || !email || !subject || !message) {

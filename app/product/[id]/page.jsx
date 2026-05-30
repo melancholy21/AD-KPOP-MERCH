@@ -84,7 +84,27 @@ const Product = () => {
         fetchProductData();
     }, [id, products.length])
 
+    // Prepare JSON-LD structured data for Google Search SEO
+    const jsonLd = {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        "name": productData.name,
+        "image": productData.image,
+        "description": productData.description,
+        "offers": {
+            "@type": "Offer",
+            "priceCurrency": "PHP",
+            "price": productData.offerPrice,
+            "itemCondition": "https://schema.org/NewCondition",
+            "availability": productData.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock"
+        }
+    };
+
     return productData ? (<>
+        <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
         <Navbar />
         <div className="px-6 md:px-16 lg:px-32 pt-14 space-y-10">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
@@ -154,30 +174,52 @@ const Product = () => {
                                         {productData.category}
                                     </td>
                                 </tr>
+                                <tr>
+                                    <td className="text-gray-600 font-medium">Availability</td>
+                                    <td className="font-semibold">
+                                        {productData.stock > 0 ? (
+                                            productData.stock <= 5 ? (
+                                                <span className="text-orange-500">Only {productData.stock} left in stock!</span>
+                                            ) : (
+                                                <span className="text-green-600">In Stock ({productData.stock} available)</span>
+                                            )
+                                        ) : (
+                                            <span className="text-red-500">Out of Stock</span>
+                                        )}
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
 
                     <div className="flex items-center mt-10 gap-4">
-                        <button onClick={() => {
-                            if (!isSignedIn) {
-                                toast.error("Please sign in to add items to cart");
-                                return;
-                            }
-                            addToCart(productData._id);
-                        }} className="w-full py-3.5 bg-gray-100 text-gray-800/80 hover:bg-gray-200 transition">
-                            Add to Cart
-                        </button>
-                        <button onClick={() => {
-                            if (!isSignedIn) {
-                                toast.error("Please sign in to purchase items");
-                                return;
-                            }
-                            addToCart(productData._id);
-                            router.push('/cart');
-                        }} className="w-full py-3.5 bg-orange-500 text-white hover:bg-orange-600 transition">
-                            Buy now
-                        </button>
+                        {productData.stock > 0 ? (
+                            <>
+                                <button onClick={() => {
+                                    if (!isSignedIn) {
+                                        toast.error("Please sign in to add items to cart");
+                                        return;
+                                    }
+                                    addToCart(productData._id);
+                                }} className="w-full py-3.5 bg-gray-100 text-gray-800/80 hover:bg-gray-200 transition">
+                                    Add to Cart
+                                </button>
+                                <button onClick={() => {
+                                    if (!isSignedIn) {
+                                        toast.error("Please sign in to purchase items");
+                                        return;
+                                    }
+                                    addToCart(productData._id);
+                                    router.push('/cart');
+                                }} className="w-full py-3.5 bg-orange-500 text-white hover:bg-orange-600 transition">
+                                    Buy now
+                                </button>
+                            </>
+                        ) : (
+                            <button disabled className="w-full py-3.5 bg-gray-300 text-gray-500 cursor-not-allowed">
+                                Out of Stock
+                            </button>
+                        )}
                     </div>
                 </div>
             </div>

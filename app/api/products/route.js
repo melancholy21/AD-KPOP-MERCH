@@ -38,9 +38,10 @@ export async function POST(req) {
         const price = Number(formData.get('price'));
         const offerPrice = Number(formData.get('offerPrice'));
         const color = formData.get('color') || 'Multi';
+        const stock = formData.get('stock') ? Number(formData.get('stock')) : 50;
 
-        if (!name || !description || !category || isNaN(price) || isNaN(offerPrice)) {
-            return NextResponse.json({ success: false, message: "Missing required fields" }, { status: 400 });
+        if (!name || !description || !category || isNaN(price) || isNaN(offerPrice) || isNaN(stock)) {
+            return NextResponse.json({ success: false, message: "Missing required fields or invalid numeric inputs" }, { status: 400 });
         }
 
         // Handle image uploads
@@ -68,6 +69,7 @@ export async function POST(req) {
             image: imageUrls,
             category,
             color,
+            stock,
             date: Date.now()
         });
 

@@ -7,6 +7,8 @@ import User from '@/models/User';
 import Address from '@/models/Address';
 import Product from '@/models/Product';
 import authSeller from '@/lib/authSeller';
+import { inngest } from '@/config/inngest';
+import { rateLimit } from '@/lib/rateLimiter';
 
 // GET: Fetch orders (user orders or seller orders)
 export async function GET(req) {
@@ -62,6 +64,16 @@ export async function GET(req) {
 // POST: Place a new order
 export async function POST(req) {
     try {
+        // Rate limit: 5 order creations per minute per IP
+        const ip = req.headers.get("x-forwarded-for") || "127.0.0.1";
+        const { isLimited } = await rateLimit(ip, 5, 60000);
+        if (isLimited) {
+            return NextResponse.json(
+                { success: false, message: "Too many checkout requests. Please wait a minute before trying again." },
+                { status: 429 }
+            );
+        }
+
         const { userId } = await auth();
         if (!userId) {
             return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
@@ -78,6 +90,27 @@ export async function POST(req) {
         const address = await Address.findById(addressId);
         if (!address) {
             return NextResponse.json({ success: false, message: "Shipping address not found" }, { status: 404 });
+        }
+
+        // Validate stock for all products in the order
+        for (const item of items) {
+            const dbProduct = await Product.findById(item.product);
+            if (!dbProduct) {
+                return NextResponse.json({ success: false, message: `Product not found` }, { status: 404 });
+            }
+            if (dbProduct.stock < item.quantity) {
+                return NextResponse.json({ 
+                    success: false, 
+                    message: `Insufficient stock for product: ${dbProduct.name}. Available: ${dbProduct.stock}, Requested: ${item.quantity}` 
+                }, { status: 400 });
+            }
+        }
+
+        // Decrement stock for all items
+        for (const item of items) {
+            await Product.findByIdAndUpdate(item.product, {
+                $inc: { stock: -item.quantity }
+            });
         }
 
         // Create the order
@@ -103,6 +136,31 @@ export async function POST(req) {
         // Retrieve fully populated order to return to client
         const populatedOrder = await Order.findById(newOrder._id)
             .populate('items.product');
+
+        // Fetch user email to send receipt
+        const user = await User.findById(userId);
+        const userEmail = user?.email;
+
+        // Trigger order confirmation email event via Inngest
+        if (userEmail) {
+            try {
+                await inngest.send({
+                    name: 'order.created',
+                    data: {
+                        orderId: newOrder._id,
+                        userEmail: userEmail,
+                        userName: user.name,
+                        amount: amount,
+                        items: items.map(item => ({
+                            productId: item.product,
+                            quantity: item.quantity
+                        }))
+                    }
+                });
+            } catch (inngestError) {
+                console.error("Failed to dispatch order.created event to Inngest:", inngestError);
+            }
+        }
 
         return NextResponse.json({
             success: true,

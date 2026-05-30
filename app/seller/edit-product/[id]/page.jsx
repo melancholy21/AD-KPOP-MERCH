@@ -16,6 +16,7 @@ const EditProduct = () => {
   const [category, setCategory] = useState('Bubble Sticker');
   const [price, setPrice] = useState('');
   const [offerPrice, setOfferPrice] = useState('');
+  const [stock, setStock] = useState('50');
   const [images, setImages] = useState([null, null, null, null]);
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
@@ -30,6 +31,7 @@ const EditProduct = () => {
         setCategory(data.product.category);
         setPrice(data.product.price);
         setOfferPrice(data.product.offerPrice);
+        setStock(data.product.stock !== undefined ? data.product.stock.toString() : '50');
         
         // Populate images array
         const productImgs = [...data.product.image];
@@ -63,6 +65,7 @@ const EditProduct = () => {
       formData.append("category", category);
       formData.append("price", price);
       formData.append("offerPrice", offerPrice);
+      formData.append("stock", stock);
       
       images.forEach((img, index) => {
         if (img) {
@@ -208,6 +211,21 @@ const EditProduct = () => {
               className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
               onChange={(e) => setOfferPrice(e.target.value)}
               value={offerPrice}
+              required
+            />
+          </div>
+
+          <div className="flex flex-col gap-1 w-32">
+            <label className="text-base font-medium" htmlFor="product-stock">
+              Stock Quantity
+            </label>
+            <input
+              id="product-stock"
+              type="number"
+              placeholder="50"
+              className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
+              onChange={(e) => setStock(e.target.value)}
+              value={stock}
               required
             />
           </div>

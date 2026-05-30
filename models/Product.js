@@ -10,6 +10,7 @@ const productSchema = new mongoose.Schema({
     category: { type: String, required: true },
     color: { type: String, required: true },
     date: { type: Number, required: true },
+    stock: { type: Number, default: 50 },
     reviews: [{
         userId: { type: String, required: true },
         userName: { type: String, required: true },

@@ -70,9 +70,10 @@ export async function PUT(req, { params }) {
         const price = Number(formData.get('price'));
         const offerPrice = Number(formData.get('offerPrice'));
         const color = formData.get('color') || 'Multi';
+        const stock = formData.get('stock') ? Number(formData.get('stock')) : undefined;
 
-        if (!name || !description || !category || isNaN(price) || isNaN(offerPrice)) {
-            return NextResponse.json({ success: false, message: "Missing required fields" }, { status: 400 });
+        if (!name || !description || !category || isNaN(price) || isNaN(offerPrice) || (stock !== undefined && isNaN(stock))) {
+            return NextResponse.json({ success: false, message: "Missing required fields or invalid numeric inputs" }, { status: 400 });
         }
 
         // Process images (both existing URLs and new file uploads)
@@ -97,17 +98,23 @@ export async function PUT(req, { params }) {
             imageUrls.push("https://i.ibb.co/bRJ8LPw1/BUBBLE-AESPA-KARINA.png");
         }
 
+        const updateData = {
+            name,
+            description,
+            price,
+            offerPrice,
+            image: imageUrls,
+            category,
+            color
+        };
+
+        if (stock !== undefined) {
+            updateData.stock = stock;
+        }
+
         const updatedProduct = await Product.findByIdAndUpdate(
             id,
-            {
-                name,
-                description,
-                price,
-                offerPrice,
-                image: imageUrls,
-                category,
-                color
-            },
+            updateData,
             { new: true }
         );
 

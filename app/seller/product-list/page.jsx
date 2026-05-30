@@ -78,9 +78,10 @@ const ProductList = () => {
             <table className="table-auto w-full min-w-[600px] sm:min-w-0">
               <thead className="text-gray-900 text-sm text-left border-b">
                 <tr>
-                  <th className="px-4 py-3 font-medium truncate w-2/5">Product</th>
+                  <th className="px-4 py-3 font-medium truncate w-1/3">Product</th>
                   <th className="px-4 py-3 font-medium truncate max-sm:hidden w-1/5">Category</th>
-                  <th className="px-4 py-3 font-medium truncate w-1/5">Price</th>
+                  <th className="px-4 py-3 font-medium truncate w-1/6">Price</th>
+                  <th className="px-4 py-3 font-medium truncate w-1/6">Stock</th>
                   <th className="px-4 py-3 font-medium truncate w-1/5">Action</th>
                 </tr>
               </thead>
@@ -103,6 +104,17 @@ const ProductList = () => {
                     </td>
                     <td className="px-4 py-3 max-sm:hidden">{product.category}</td>
                     <td className="px-4 py-3 font-medium">₱{product.offerPrice}</td>
+                    <td className="px-4 py-3 font-semibold">
+                      {product.stock !== undefined ? (
+                        product.stock > 0 ? (
+                          <span className="text-green-600">{product.stock}</span>
+                        ) : (
+                          <span className="text-red-500">Out of stock</span>
+                        )
+                      ) : (
+                        <span className="text-gray-400">50 (Default)</span>
+                      )}
+                    </td>
                     <td className="px-4 py-3">
                       <div className="flex flex-wrap items-center gap-1.5">
                         <button onClick={() => router.push(`/product/${product._id}`)} className="px-2 py-1 text-xs bg-orange-500 text-white rounded hover:bg-orange-600 transition">

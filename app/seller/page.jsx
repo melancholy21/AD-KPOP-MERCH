@@ -16,6 +16,7 @@ const AddProduct = () => {
   const [category, setCategory] = useState('Bubble Sticker');
   const [price, setPrice] = useState('');
   const [offerPrice, setOfferPrice] = useState('');
+  const [stock, setStock] = useState('50');
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -30,6 +31,7 @@ const AddProduct = () => {
       formData.append("category", category);
       formData.append("price", price);
       formData.append("offerPrice", offerPrice);
+      formData.append("stock", stock);
       
       files.forEach((file, index) => {
         if (file) {
@@ -50,6 +52,7 @@ const AddProduct = () => {
         setDescription('');
         setPrice('');
         setOfferPrice('');
+        setStock('50');
         setFiles([]);
       } else {
         toast.error(data.message || "Failed to add product.", { id: toastId });
@@ -161,6 +164,20 @@ const AddProduct = () => {
               className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
               onChange={(e) => setOfferPrice(e.target.value)}
               value={offerPrice}
+              required
+            />
+          </div>
+          <div className="flex flex-col gap-1 w-32">
+            <label className="text-base font-medium" htmlFor="product-stock">
+              Stock Quantity
+            </label>
+            <input
+              id="product-stock"
+              type="number"
+              placeholder="50"
+              className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
+              onChange={(e) => setStock(e.target.value)}
+              value={stock}
               required
             />
           </div>
