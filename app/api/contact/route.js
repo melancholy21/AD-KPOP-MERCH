@@ -12,6 +12,17 @@ export async function POST(request) {
             );
         }
 
+        // Check if environment variables are available
+        if (!process.env.BREVO_SMTP_USER || !process.env.BREVO_SMTP_PASS) {
+            return NextResponse.json(
+                { 
+                    success: false, 
+                    message: `Missing Brevo SMTP environment variables. USER: ${process.env.BREVO_SMTP_USER ? 'Present' : 'Missing'}, PASS: ${process.env.BREVO_SMTP_PASS ? 'Present' : 'Missing'}` 
+                },
+                { status: 500 }
+            );
+        }
+
         // Create Nodemailer transporter using Brevo SMTP
         const transporter = nodemailer.createTransport({
             host: process.env.BREVO_SMTP_HOST || "smtp-relay.brevo.com",
