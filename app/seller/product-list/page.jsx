@@ -116,7 +116,7 @@ const ProductList = () => {
                       )}
                     </td>
                     <td className="px-4 py-3">
-                      <div className="flex flex-wrap items-center gap-1.5">
+                      <div className="flex flex-row items-center gap-1.5 whitespace-nowrap">
                         <button onClick={() => router.push(`/product/${product._id}`)} className="px-2 py-1 text-xs bg-orange-500 text-white rounded hover:bg-orange-600 transition">
                           Visit
                         </button>
