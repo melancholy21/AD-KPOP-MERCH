@@ -85,7 +85,7 @@ const Product = () => {
     }, [id, products.length])
 
     // Prepare JSON-LD structured data for Google Search SEO
-    const jsonLd = {
+    const jsonLd = productData ? {
         "@context": "https://schema.org",
         "@type": "Product",
         "name": productData.name,
@@ -98,13 +98,15 @@ const Product = () => {
             "itemCondition": "https://schema.org/NewCondition",
             "availability": productData.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock"
         }
-    };
+    } : null;
 
     return productData ? (<>
-        <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
+        {jsonLd && (
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+            />
+        )}
         <Navbar />
         <div className="px-6 md:px-16 lg:px-32 pt-14 space-y-10">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
