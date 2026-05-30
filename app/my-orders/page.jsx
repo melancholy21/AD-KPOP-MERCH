@@ -7,6 +7,40 @@ import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import Loading from "@/components/Loading";
 
+const getStatusStyle = (status) => {
+    switch (status) {
+        case "Delivered":
+            return "bg-green-100 text-green-700 border-green-200";
+        case "Shipped":
+        case "Out for Delivery":
+            return "bg-blue-100 text-blue-700 border-blue-200";
+        case "Packing":
+            return "bg-orange-100 text-orange-700 border-orange-200";
+        case "Cancelled":
+            return "bg-red-100 text-red-700 border-red-200";
+        case "Order Placed":
+        default:
+            return "bg-gray-100 text-gray-600 border-gray-200";
+    }
+};
+
+const getStatusDot = (status) => {
+    switch (status) {
+        case "Delivered":
+            return "bg-green-500";
+        case "Shipped":
+        case "Out for Delivery":
+            return "bg-blue-500";
+        case "Packing":
+            return "bg-orange-500";
+        case "Cancelled":
+            return "bg-red-500";
+        case "Order Placed":
+        default:
+            return "bg-gray-400";
+    }
+};
+
 const MyOrders = () => {
 
     const { currency } = useAppContext();
@@ -15,8 +49,20 @@ const MyOrders = () => {
     const [loading, setLoading] = useState(true);
 
     const fetchOrders = async () => {
-        setOrders(orderDummyData)
-        setLoading(false);
+        try {
+            const res = await fetch("/api/orders");
+            const data = await res.json();
+            if (data.success && data.orders && data.orders.length > 0) {
+                setOrders(data.orders);
+            } else {
+                setOrders(orderDummyData);
+            }
+        } catch (error) {
+            console.error("Error fetching orders:", error);
+            setOrders(orderDummyData);
+        } finally {
+            setLoading(false);
+        }
     }
 
     useEffect(() => {
@@ -26,7 +72,7 @@ const MyOrders = () => {
     return (
         <>
             <Navbar />
-            <div className="flex flex-col justify-between px-6 md:px-16 lg:px-32 py-6 min-h-screen">
+            <div className="flex flex-col justify-between px-6 md:px-16 lg:px-32 py-6 min-h-screen pb-24 md:pb-6">
                 <div className="space-y-5">
                     <h2 className="text-lg font-medium mt-6">My Orders</h2>
                     {loading ? <Loading /> : (<div className="max-w-5xl border-t border-gray-300 text-sm">
@@ -40,29 +86,38 @@ const MyOrders = () => {
                                     />
                                     <p className="flex flex-col gap-3">
                                         <span className="font-medium text-base">
-                                            {order.items.map((item) => item.product.name + ` x ${item.quantity}`).join(", ")}
+                                            {order.items.map((item) => (item.product?.name || "Deleted Product") + ` x ${item.quantity}`).join(", ")}
                                         </span>
                                         <span>Items : {order.items.length}</span>
                                     </p>
                                 </div>
                                 <div>
-                                    <p>
-                                        <span className="font-medium">{order.address.fullName}</span>
-                                        <br />
-                                        <span >{order.address.area}</span>
-                                        <br />
-                                        <span>{`${order.address.city}, ${order.address.state}`}</span>
-                                        <br />
-                                        <span>{order.address.phoneNumber}</span>
-                                    </p>
+                                    {order.address ? (
+                                        <p>
+                                            <span className="font-medium">{order.address.fullName}</span>
+                                            <br />
+                                            <span>{order.address.area}</span>
+                                            <br />
+                                            <span>{`${order.address.city}, ${order.address.state}`}</span>
+                                            <br />
+                                            <span>{order.address.phoneNumber}</span>
+                                        </p>
+                                    ) : (
+                                        <p className="text-gray-400 italic">Address details unavailable</p>
+                                    )}
                                 </div>
                                 <p className="font-medium my-auto">{currency}{order.amount}</p>
                                 <div>
-                                    <p className="flex flex-col">
+                                    <div className="flex flex-col gap-1">
                                         <span>Method : COD</span>
                                         <span>Date : {new Date(order.date).toLocaleDateString()}</span>
                                         <span>Payment : Pending</span>
-                                    </p>
+                                        {/* Status Badge */}
+                                        <span className={`inline-flex items-center gap-1.5 mt-2 px-3 py-1 rounded-full text-xs font-medium border w-fit ${getStatusStyle(order.status)}`}>
+                                            <span className={`w-1.5 h-1.5 rounded-full ${getStatusDot(order.status)}`}></span>
+                                            {order.status || "Order Placed"}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                         ))}

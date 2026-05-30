@@ -1,17 +1,31 @@
-import { addressDummyData } from "@/assets/assets";
 import { useAppContext } from "@/context/AppContext";
 import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 const OrderSummary = () => {
 
-  const { currency, router, getCartCount, getCartAmount } = useAppContext()
+  const { currency, router, getCartCount, getCartAmount, cartItems, setCartItems, products } = useAppContext()
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const [userAddresses, setUserAddresses] = useState([]);
 
   const fetchUserAddresses = async () => {
-    setUserAddresses(addressDummyData);
+    try {
+      const res = await fetch("/api/address");
+      const data = await res.json();
+      if (data.success && data.addresses && data.addresses.length > 0) {
+        setUserAddresses(data.addresses);
+        setSelectedAddress(data.addresses[0]);
+      } else {
+        setUserAddresses([]);
+        setSelectedAddress(null);
+      }
+    } catch (error) {
+      console.error("Error fetching addresses:", error);
+      setUserAddresses([]);
+      setSelectedAddress(null);
+    }
   }
 
   const handleAddressSelect = (address) => {
@@ -19,8 +33,88 @@ const OrderSummary = () => {
     setIsDropdownOpen(false);
   };
 
-  const createOrder = async () => {
+  const deleteAddress = async (e, addressId) => {
+    e.stopPropagation();
+    const toastId = toast.loading("Deleting address...");
+    try {
+      const res = await fetch(`/api/address?id=${addressId}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast.success("Address deleted successfully", { id: toastId });
+        const updated = userAddresses.filter(addr => addr._id !== addressId);
+        setUserAddresses(updated);
+        if (selectedAddress && selectedAddress._id === addressId) {
+          if (updated.length > 0) {
+            setSelectedAddress(updated[0]);
+          } else {
+            setSelectedAddress(null);
+          }
+        }
+      } else {
+        if (addressId === "67a1e4233f34a77b6dde9055") {
+          toast.success("Address removed", { id: toastId });
+          const updated = userAddresses.filter(addr => addr._id !== addressId);
+          setUserAddresses(updated);
+          if (selectedAddress && selectedAddress._id === addressId) {
+            setSelectedAddress(null);
+          }
+        } else {
+          toast.error(data.message || "Failed to delete address", { id: toastId });
+        }
+      }
+    } catch (error) {
+      toast.error(error.message || "Something went wrong", { id: toastId });
+    }
+  };
 
+  const createOrder = async () => {
+    if (!selectedAddress) {
+      toast.error("Please select a shipping address");
+      return;
+    }
+
+    const orderItems = Object.keys(cartItems)
+      .map(itemId => {
+        const product = products.find(p => p._id === itemId);
+        if (product && cartItems[itemId] > 0) {
+          return { product: itemId, quantity: cartItems[itemId] };
+        }
+        return null;
+      })
+      .filter(item => item !== null);
+
+    if (orderItems.length === 0) {
+      toast.error("Your cart is empty");
+      return;
+    }
+
+    const amount = getCartAmount() + Math.floor(getCartAmount() * 0.02);
+    const toastId = toast.loading("Placing order...");
+
+    try {
+      const res = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          addressId: selectedAddress._id,
+          items: orderItems,
+          amount
+        }),
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        toast.success("Order placed successfully!", { id: toastId });
+        setCartItems({});
+        router.push("/order-placed");
+      } else {
+        toast.error(data.message || "Failed to place order", { id: toastId });
+      }
+    } catch (error) {
+      toast.error(error.message || "Something went wrong", { id: toastId });
+    }
   }
 
   useEffect(() => {
@@ -60,10 +154,19 @@ const OrderSummary = () => {
                 {userAddresses.map((address, index) => (
                   <li
                     key={index}
-                    className="px-4 py-2 hover:bg-gray-500/10 cursor-pointer"
+                    className="flex justify-between items-center gap-2 px-4 py-2 hover:bg-gray-500/10 cursor-pointer text-gray-700"
                     onClick={() => handleAddressSelect(address)}
                   >
-                    {address.fullName}, {address.area}, {address.city}, {address.state}
+                    <span className="truncate">
+                      {address.fullName}, {address.area}, {address.city}, {address.state}
+                    </span>
+                    <button
+                      onClick={(e) => deleteAddress(e, address._id)}
+                      className="text-red-500 hover:text-red-700 p-1 text-xs shrink-0 font-medium bg-red-50 hover:bg-red-100 rounded px-1.5 py-0.5"
+                      title="Delete Address"
+                    >
+                      Delete
+                    </button>
                   </li>
                 ))}
                 <li

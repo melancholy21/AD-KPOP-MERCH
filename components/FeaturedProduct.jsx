@@ -39,7 +39,7 @@ const FeaturedProduct = () => {
           <div key={id} className="relative group">
             <Image
               src={image}
-              alt={title}
+              alt={title || "Featured Event"}
               className="group-hover:brightness-100 transition duration-300 w-full h-auto object-cover"
             />
             <div className="group-hover:-translate-y-4 transition duration-300 absolute bottom-8 left-8 text-white space-y-2">

@@ -5,7 +5,12 @@ import Footer from "@/components/Footer";
 import Image from "next/image";
 import { useState } from "react";
 
+import { useAppContext } from "@/context/AppContext";
+import toast from "react-hot-toast";
+
 const AddAddress = () => {
+
+    const { router } = useAppContext();
 
     const [address, setAddress] = useState({
         fullName: '',
@@ -18,7 +23,29 @@ const AddAddress = () => {
 
     const onSubmitHandler = async (e) => {
         e.preventDefault();
+        const { fullName, phoneNumber, pincode, area, city, state } = address;
+        if (!fullName || !phoneNumber || !pincode || !area || !city || !state) {
+            toast.error("Please fill in all fields");
+            return;
+        }
 
+        const toastId = toast.loading("Saving address...");
+        try {
+            const res = await fetch("/api/address", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(address),
+            });
+            const data = await res.json();
+            if (data.success) {
+                toast.success("Address saved successfully!", { id: toastId });
+                router.push("/cart");
+            } else {
+                toast.error(data.message || "Failed to save address", { id: toastId });
+            }
+        } catch (error) {
+            toast.error(error.message || "Something went wrong", { id: toastId });
+        }
     }
 
     return (

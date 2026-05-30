@@ -6,19 +6,27 @@ import { useAppContext } from "@/context/AppContext";
 import Image from "next/image";
 import { useClerk, UserButton } from "@clerk/nextjs";
 
+const HeartMenuIcon = () => (
+  <svg className="w-5 h-5 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+  </svg>
+);
+
 const Navbar = () => {
 
-  const { isSeller, router, user } = useAppContext();
+  const { isSeller, router, user, getCartCount } = useAppContext();
   const {openSignIn} = useClerk();
+
+  const cartCount = getCartCount();
 
   return (
     <nav className="flex items-center justify-between px-6 md:px-16 lg:px-32 py-3 border-b border-gray-300 text-gray-700">
-      <Image
-        className="cursor-pointer w-28 md:w-32"
+      <span
+        className="cursor-pointer text-xl md:text-2xl font-bold text-orange-600 tracking-wide"
         onClick={() => router.push('/')}
-        src={assets.logo1}
-        alt="logo"
-      />
+      >
+        AD KPOP MERCH
+      </span>
       <div className="flex items-center gap-4 lg:gap-8 max-md:hidden">
         <Link href="/" className="hover:text-gray-900 transition">
           Home
@@ -26,10 +34,10 @@ const Navbar = () => {
         <Link href="/all-products" className="hover:text-gray-900 transition">
           Shop
         </Link>
-        <Link href="/" className="hover:text-gray-900 transition">
+        <Link href="/about" className="hover:text-gray-900 transition">
           About Us
         </Link>
-        <Link href="/" className="hover:text-gray-900 transition">
+        <Link href="/contact" className="hover:text-gray-900 transition">
           Contact
         </Link>
 
@@ -38,7 +46,15 @@ const Navbar = () => {
       </div>
 
       <ul className="hidden md:flex items-center gap-4 ">
-        <Image className="w-4 h-4" src={assets.search_icon} alt="search icon" />
+        {/* Cart icon with badge */}
+        <li className="relative cursor-pointer" onClick={() => router.push('/cart')}>
+          <Image src={assets.cart_icon} alt="cart" className="w-5 h-5 opacity-70 hover:opacity-100 transition" />
+          {cartCount > 0 && (
+            <span className="absolute -top-2 -right-3 bg-orange-500 text-white text-[10px] font-bold w-4.5 h-4.5 min-w-[18px] min-h-[18px] rounded-full flex items-center justify-center leading-none">
+              {cartCount > 9 ? '9+' : cartCount}
+            </span>
+          )}
+        </li>
         {
         user 
         ? <>
@@ -53,7 +69,10 @@ const Navbar = () => {
             <UserButton.Action label="Cart" labelIcon={<CartIcon />} onClick={()=> router.push('/cart')} />
           </UserButton.MenuItems>
           <UserButton.MenuItems>
-            <UserButton.Action label="My Order" labelIcon={<BagIcon />} onClick={()=> router.push('/my-orders')} />
+            <UserButton.Action label="Wishlist" labelIcon={<HeartMenuIcon />} onClick={()=> router.push('/wishlist')} />
+          </UserButton.MenuItems>
+          <UserButton.MenuItems>
+            <UserButton.Action label="My Orders" labelIcon={<BagIcon />} onClick={()=> router.push('/my-orders')} />
           </UserButton.MenuItems>
         </UserButton>
         </> 
@@ -80,7 +99,10 @@ const Navbar = () => {
             <UserButton.Action label="Cart" labelIcon={<CartIcon />} onClick={()=> router.push('/cart')} />
           </UserButton.MenuItems>
           <UserButton.MenuItems>
-            <UserButton.Action label="My Order" labelIcon={<BagIcon />} onClick={()=> router.push('/my-orders')} />
+            <UserButton.Action label="Wishlist" labelIcon={<HeartMenuIcon />} onClick={()=> router.push('/wishlist')} />
+          </UserButton.MenuItems>
+          <UserButton.MenuItems>
+            <UserButton.Action label="My Orders" labelIcon={<BagIcon />} onClick={()=> router.push('/my-orders')} />
           </UserButton.MenuItems>
         </UserButton>
         </> 

@@ -1,27 +1,60 @@
 'use client'
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { assets } from "@/assets/assets";
 import Image from "next/image";
-
+import { useParams } from "next/navigation";
 import { useAppContext } from "@/context/AppContext";
 import toast from "react-hot-toast";
+import Loading from "@/components/Loading";
 
-const AddProduct = () => {
+const EditProduct = () => {
+  const { id } = useParams();
+  const { fetchProductData, router } = useAppContext();
 
-  const { fetchProductData } = useAppContext();
-
-  const [files, setFiles] = useState([]);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('Bubble Sticker');
   const [price, setPrice] = useState('');
   const [offerPrice, setOfferPrice] = useState('');
+  const [images, setImages] = useState([null, null, null, null]);
   const [loading, setLoading] = useState(false);
+  const [fetching, setFetching] = useState(true);
+
+  const fetchProductDetails = async () => {
+    try {
+      const res = await fetch(`/api/products/${id}`);
+      const data = await res.json();
+      if (data.success) {
+        setName(data.product.name);
+        setDescription(data.product.description);
+        setCategory(data.product.category);
+        setPrice(data.product.price);
+        setOfferPrice(data.product.offerPrice);
+        
+        // Populate images array
+        const productImgs = [...data.product.image];
+        while (productImgs.length < 4) {
+          productImgs.push(null);
+        }
+        setImages(productImgs);
+      } else {
+        toast.error("Failed to load product details");
+      }
+    } catch (error) {
+      toast.error("Error loading product details");
+    } finally {
+      setFetching(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProductDetails();
+  }, [id]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const toastId = toast.loading("Adding product...");
+    const toastId = toast.loading("Updating product...");
 
     try {
       const formData = new FormData();
@@ -31,28 +64,24 @@ const AddProduct = () => {
       formData.append("price", price);
       formData.append("offerPrice", offerPrice);
       
-      files.forEach((file, index) => {
-        if (file) {
-          formData.append(`image${index}`, file);
+      images.forEach((img, index) => {
+        if (img) {
+          formData.append(`image${index}`, img);
         }
       });
 
-      const res = await fetch("/api/products", {
-        method: "POST",
+      const res = await fetch(`/api/products/${id}`, {
+        method: "PUT",
         body: formData,
       });
 
       const data = await res.json();
       if (data.success) {
-        toast.success(data.message || "Product added successfully!", { id: toastId });
+        toast.success("Product updated successfully!", { id: toastId });
         await fetchProductData();
-        setName('');
-        setDescription('');
-        setPrice('');
-        setOfferPrice('');
-        setFiles([]);
+        router.push("/seller/product-list");
       } else {
-        toast.error(data.message || "Failed to add product.", { id: toastId });
+        toast.error(data.message || "Failed to update product.", { id: toastId });
       }
     } catch (error) {
       toast.error(error.message || "Something went wrong.", { id: toastId });
@@ -61,33 +90,50 @@ const AddProduct = () => {
     }
   };
 
+  const getPreviewSrc = (item) => {
+    if (!item) return assets.upload_area;
+    if (typeof item === 'string') return item;
+    return URL.createObjectURL(item);
+  };
+
+  if (fetching) return <div className="flex-1 min-h-screen flex items-center justify-center"><Loading /></div>;
+
   return (
-    <div className="flex-1 min-h-screen flex flex-col justify-between w-full overflow-hidden">
+    <div className="flex-1 min-h-screen flex flex-col justify-between">
       <form onSubmit={handleSubmit} className="md:p-10 p-4 space-y-5 max-w-lg">
+        <h2 className="text-xl font-semibold text-gray-800">Edit Product</h2>
+        
         <div>
           <p className="text-base font-medium">Product Image</p>
           <div className="flex flex-wrap items-center gap-3 mt-2">
-
-            {[...Array(4)].map((_, index) => (
+            {images.map((img, index) => (
               <label key={index} htmlFor={`image${index}`}>
-                <input onChange={(e) => {
-                  const updatedFiles = [...files];
-                  updatedFiles[index] = e.target.files[0];
-                  setFiles(updatedFiles);
-                }} type="file" id={`image${index}`} hidden />
+                <input 
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                      const updatedImages = [...images];
+                      updatedImages[index] = file;
+                      setImages(updatedImages);
+                    }
+                  }} 
+                  type="file" 
+                  id={`image${index}`} 
+                  hidden 
+                />
                 <Image
-                  key={index}
-                  className="max-w-24 cursor-pointer"
-                  src={files[index] ? URL.createObjectURL(files[index]) : assets.upload_area}
+                  className="max-w-24 max-h-24 object-cover cursor-pointer border rounded bg-gray-50"
+                  src={getPreviewSrc(img)}
                   alt=""
                   width={100}
                   height={100}
+                  unoptimized={typeof img === 'string'}
                 />
               </label>
             ))}
-
           </div>
         </div>
+
         <div className="flex flex-col gap-1 max-w-md">
           <label className="text-base font-medium" htmlFor="product-name">
             Product Name
@@ -102,11 +148,9 @@ const AddProduct = () => {
             required
           />
         </div>
+
         <div className="flex flex-col gap-1 max-w-md">
-          <label
-            className="text-base font-medium"
-            htmlFor="product-description"
-          >
+          <label className="text-base font-medium" htmlFor="product-description">
             Product Description
           </label>
           <textarea
@@ -119,8 +163,9 @@ const AddProduct = () => {
             required
           ></textarea>
         </div>
+
         <div className="flex items-center gap-5 flex-wrap">
-          <div className="flex flex-col gap-1 w-32">
+          <div className="flex flex-col gap-1 w-36">
             <label className="text-base font-medium" htmlFor="category">
               Category
             </label>
@@ -128,7 +173,7 @@ const AddProduct = () => {
               id="category"
               className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
               onChange={(e) => setCategory(e.target.value)}
-              defaultValue={category}
+              value={category}
             >
               <option value="Bubble Sticker">Bubble Sticker</option>
               <option value="Banner">Banner</option>
@@ -136,6 +181,7 @@ const AddProduct = () => {
               <option value="LOMO Cards">LOMO Cards</option>
             </select>
           </div>
+
           <div className="flex flex-col gap-1 w-32">
             <label className="text-base font-medium" htmlFor="product-price">
               Product Price
@@ -150,6 +196,7 @@ const AddProduct = () => {
               required
             />
           </div>
+
           <div className="flex flex-col gap-1 w-32">
             <label className="text-base font-medium" htmlFor="offer-price">
               Offer Price
@@ -165,12 +212,26 @@ const AddProduct = () => {
             />
           </div>
         </div>
-        <button disabled={loading} type="submit" className="px-8 py-2.5 bg-orange-500 text-white font-medium rounded disabled:bg-orange-300">
-          {loading ? 'Adding...' : 'ADD'}
-        </button>
+
+        <div className="flex gap-4">
+          <button 
+            disabled={loading} 
+            type="submit" 
+            className="px-8 py-2.5 bg-orange-500 text-white font-medium rounded disabled:bg-orange-300 hover:bg-orange-600 transition"
+          >
+            {loading ? 'Updating...' : 'Save Changes'}
+          </button>
+          <button 
+            type="button"
+            onClick={() => router.push("/seller/product-list")}
+            className="px-8 py-2.5 border border-gray-300 text-gray-700 font-medium rounded hover:bg-gray-50 transition"
+          >
+            Cancel
+          </button>
+        </div>
       </form>
     </div>
   );
 };
 
-export default AddProduct;
+export default EditProduct;

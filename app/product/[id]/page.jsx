@@ -7,8 +7,9 @@ import Footer from "@/components/Footer";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import Loading from "@/components/Loading";
+import { useUser } from "@clerk/nextjs";
+import toast from "react-hot-toast";
 import { useAppContext } from "@/context/AppContext";
-import React from "react";
 
 const Product = () => {
 
@@ -16,12 +17,67 @@ const Product = () => {
 
     const { products, router, addToCart } = useAppContext()
 
+    const { isSignedIn, user } = useUser();
+
     const [mainImage, setMainImage] = useState(null);
     const [productData, setProductData] = useState(null);
+
+    const [rating, setRating] = useState(5);
+    const [comment, setComment] = useState("");
+    const [isAnonymous, setIsAnonymous] = useState(false);
+    const [submittingReview, setSubmittingReview] = useState(false);
 
     const fetchProductData = async () => {
         const product = products.find(product => product._id === id);
         setProductData(product);
+    }
+
+    const getAverageRating = () => {
+        if (!productData?.reviews || productData.reviews.length === 0) return 0;
+        const total = productData.reviews.reduce((sum, review) => sum + review.rating, 0);
+        return Math.round((total / productData.reviews.length) * 10) / 10;
+    }
+
+    const renderStars = (ratingVal) => {
+        return (
+            <div className="flex items-center gap-0.5">
+                {[...Array(5)].map((_, i) => (
+                    <Image
+                        key={i}
+                        className="h-4 w-4"
+                        src={i < Math.floor(ratingVal) ? assets.star_icon : assets.star_dull_icon}
+                        alt="star"
+                    />
+                ))}
+            </div>
+        )
+    }
+
+    const handleReviewSubmit = async (e) => {
+        e.preventDefault();
+        if (!comment.trim()) return;
+        setSubmittingReview(true);
+        const toastId = toast.loading("Submitting review...");
+        try {
+            const res = await fetch(`/api/products/${productData._id}/review`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ rating, comment, isAnonymous })
+            });
+            const data = await res.json();
+            if (data.success) {
+                toast.success("Review submitted successfully!", { id: toastId });
+                setProductData(data.product);
+                setComment("");
+                setIsAnonymous(false);
+            } else {
+                toast.error(data.message || "Failed to submit review", { id: toastId });
+            }
+        } catch (error) {
+            toast.error("Error submitting review", { id: toastId });
+        } finally {
+            setSubmittingReview(false);
+        }
     }
 
     useEffect(() => {
@@ -68,18 +124,8 @@ const Product = () => {
                         {productData.name}
                     </h1>
                     <div className="flex items-center gap-2">
-                        <div className="flex items-center gap-0.5">
-                            <Image className="h-4 w-4" src={assets.star_icon} alt="star_icon" />
-                            <Image className="h-4 w-4" src={assets.star_icon} alt="star_icon" />
-                            <Image className="h-4 w-4" src={assets.star_icon} alt="star_icon" />
-                            <Image className="h-4 w-4" src={assets.star_icon} alt="star_icon" />
-                            <Image
-                                className="h-4 w-4"
-                                src={assets.star_dull_icon}
-                                alt="star_dull_icon"
-                            />
-                        </div>
-                        <p>(4.5)</p>
+                        {renderStars(getAverageRating())}
+                        <p>({getAverageRating() || "No reviews yet"})</p>
                     </div>
                     <p className="text-gray-600 mt-3">
                         {productData.description}
@@ -113,15 +159,116 @@ const Product = () => {
                     </div>
 
                     <div className="flex items-center mt-10 gap-4">
-                        <button onClick={() => addToCart(productData._id)} className="w-full py-3.5 bg-gray-100 text-gray-800/80 hover:bg-gray-200 transition">
+                        <button onClick={() => {
+                            if (!isSignedIn) {
+                                toast.error("Please sign in to add items to cart");
+                                return;
+                            }
+                            addToCart(productData._id);
+                        }} className="w-full py-3.5 bg-gray-100 text-gray-800/80 hover:bg-gray-200 transition">
                             Add to Cart
                         </button>
-                        <button onClick={() => { addToCart(productData._id); router.push('/cart') }} className="w-full py-3.5 bg-orange-500 text-white hover:bg-orange-600 transition">
+                        <button onClick={() => {
+                            if (!isSignedIn) {
+                                toast.error("Please sign in to purchase items");
+                                return;
+                            }
+                            addToCart(productData._id);
+                            router.push('/cart');
+                        }} className="w-full py-3.5 bg-orange-500 text-white hover:bg-orange-600 transition">
                             Buy now
                         </button>
                     </div>
                 </div>
             </div>
+            {/* Reviews Section */}
+            <div className="border-t pt-10 mt-10">
+                <h3 className="text-2xl font-medium mb-6">Customer Reviews</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                    {/* Reviews List */}
+                    <div className="space-y-6">
+                        {productData.reviews && productData.reviews.length > 0 ? (
+                            productData.reviews.map((rev, index) => (
+                                <div key={index} className="border-b pb-4 last:border-0">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <p className="font-semibold text-gray-800">{rev.isAnonymous ? "Anonymous User" : rev.userName}</p>
+                                        <p className="text-xs text-gray-500">{new Date(rev.date).toLocaleDateString()}</p>
+                                    </div>
+                                    <div className="flex items-center gap-2 mb-2">
+                                        {renderStars(rev.rating)}
+                                    </div>
+                                    <p className="text-gray-600 text-sm">{rev.comment}</p>
+                                </div>
+                            ))
+                        ) : (
+                            <p className="text-gray-500">No reviews yet for this product.</p>
+                        )}
+                    </div>
+
+                    {/* Review Form */}
+                    <div className="bg-gray-55 p-6 rounded-lg border">
+                        <h4 className="text-lg font-medium mb-4 text-gray-800">Write a Review</h4>
+                        {isSignedIn ? (
+                            productData.reviews?.some(r => r.userId === user?.id) ? (
+                                <div className="text-center py-6">
+                                    <p className="text-sm font-medium text-orange-600 bg-orange-50 rounded-md p-3">
+                                        You have already submitted a review for this product. Thank you!
+                                    </p>
+                                </div>
+                            ) : (
+                                <form onSubmit={handleReviewSubmit} className="space-y-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Rating</label>
+                                        <select
+                                            value={rating}
+                                            onChange={(e) => setRating(Number(e.target.value))}
+                                            className="w-full border rounded p-2 focus:ring-1 focus:ring-orange-500 outline-none"
+                                        >
+                                            <option value="5">5 Stars - Excellent</option>
+                                            <option value="4">4 Stars - Good</option>
+                                            <option value="3">3 Stars - Average</option>
+                                            <option value="2">2 Stars - Poor</option>
+                                            <option value="1">1 Star - Terrible</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Comment</label>
+                                        <textarea
+                                            value={comment}
+                                            onChange={(e) => setComment(e.target.value)}
+                                            rows="4"
+                                            placeholder="Share your thoughts about this product..."
+                                            className="w-full border rounded p-2 focus:ring-1 focus:ring-orange-500 outline-none resize-none"
+                                            required
+                                        ></textarea>
+                                    </div>
+                                    <div className="flex items-center py-1">
+                                        <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer select-none">
+                                            <input
+                                                type="checkbox"
+                                                checked={isAnonymous}
+                                                onChange={(e) => setIsAnonymous(e.target.checked)}
+                                                className="rounded text-orange-500 focus:ring-orange-500 w-4 h-4 cursor-pointer"
+                                            />
+                                            Review anonymously
+                                        </label>
+                                    </div>
+                                    <button
+                                        type="submit"
+                                        disabled={submittingReview}
+                                        className="w-full py-2.5 bg-orange-500 text-white rounded hover:bg-orange-600 transition disabled:bg-orange-300"
+                                    >
+                                        {submittingReview ? "Submitting..." : "Submit Review"}
+                                    </button>
+                                </form>
+                            )
+                        ) : (
+                            <p className="text-sm text-gray-500">Please sign in to write a review.</p>
+                        )}
+                    </div>
+                </div>
+            </div>
+
             <div className="flex flex-col items-center">
                 <div className="flex flex-col items-center mb-4 mt-16">
                     <p className="text-3xl font-medium">Featured <span className="font-medium text-orange-500">Products</span></p>

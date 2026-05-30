@@ -3,6 +3,7 @@ import "./globals.css";
 import { AppContextProvider } from "@/context/AppContext";
 import { Toaster } from "react-hot-toast";
 import { ClerkProvider } from "@clerk/nextjs";
+import BottomNav from "@/components/BottomNav";
 
 const outfit = Outfit({ subsets: ['latin'], weight: ["300", "400", "500"] })
 
@@ -19,6 +20,7 @@ export default function RootLayout({ children }) {
           <Toaster />
           <AppContextProvider>
             {children}
+            <BottomNav />
           </AppContextProvider>
         </body>
       </html>
