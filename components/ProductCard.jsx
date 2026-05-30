@@ -17,18 +17,6 @@ const ProductCard = ({ product }) => {
 
     const isWishlisted = wishlist && wishlist.includes(product._id);
 
-    const getAspectClass = (category) => {
-        switch (category) {
-            case 'LOMO Cards':
-            case 'Photocards':
-                return 'aspect-[2/3]'; // Portrait
-            case 'Banner':
-                return 'aspect-[16/9]'; // Landscape
-            default:
-                return 'aspect-square'; // Square
-        }
-    };
-
     return (
         <motion.div
             layout
@@ -40,11 +28,11 @@ const ProductCard = ({ product }) => {
             onClick={() => { router.push('/product/' + product._id); scrollTo(0, 0) }}
             className="flex flex-col items-start gap-0.5 max-w-[200px] w-full cursor-pointer bg-white rounded-xl p-2 border border-gray-100 shadow-sm"
         >
-            <div className={`cursor-pointer group relative bg-gray-50 rounded-lg w-full flex items-center justify-center overflow-hidden ${getAspectClass(product.category)}`}>
+            <div className="cursor-pointer group relative bg-gray-500/10 rounded-lg w-full h-52 flex items-center justify-center overflow-hidden">
                 <Image
                     src={product.image[0]}
                     alt={product.name}
-                    className="group-hover:scale-105 transition object-contain w-full h-full p-1 mix-blend-multiply"
+                    className="group-hover:scale-105 transition object-cover w-4/5 h-4/5 md:w-full md:h-full"
                     width={800}
                     height={800}
                 />
