@@ -194,7 +194,7 @@ const Product = () => {
                         </table>
                     </div>
 
-                    <div className="flex items-center mt-10 gap-4">
+                    <div className="flex flex-row items-center mt-10 gap-4 w-full">
                         {productData.stock > 0 ? (
                             <>
                                 <button onClick={() => {
@@ -203,7 +203,7 @@ const Product = () => {
                                         return;
                                     }
                                     addToCart(productData._id);
-                                }} className="w-full py-3.5 bg-gray-100 text-gray-800/80 hover:bg-gray-200 transition">
+                                }} className="flex-1 py-3.5 px-4 bg-gray-100 text-gray-800/80 hover:bg-gray-200 rounded-md font-medium text-center whitespace-nowrap transition duration-200">
                                     Add to Cart
                                 </button>
                                 <button onClick={() => {
@@ -213,12 +213,12 @@ const Product = () => {
                                     }
                                     addToCart(productData._id);
                                     router.push('/cart');
-                                }} className="w-full py-3.5 bg-orange-500 text-white hover:bg-orange-600 transition">
+                                }} className="flex-1 py-3.5 px-4 bg-orange-500 text-white hover:bg-orange-600 rounded-md font-medium text-center whitespace-nowrap transition duration-200">
                                     Buy now
                                 </button>
                             </>
                         ) : (
-                            <button disabled className="w-full py-3.5 bg-gray-300 text-gray-500 cursor-not-allowed">
+                            <button disabled className="w-full py-3.5 bg-gray-300 text-gray-500 font-medium rounded-md cursor-not-allowed">
                                 Out of Stock
                             </button>
                         )}
