@@ -43,6 +43,12 @@ const AllProducts = () => {
                 return b.offerPrice - a.offerPrice;
             } else if (sortOption === "newest") {
                 return b.date - a.date;
+            } else if (sortOption === "rating-high") {
+                const avgRating = (prod) => prod.reviews && prod.reviews.length > 0 ? prod.reviews.reduce((sum, r) => sum + r.rating, 0) / prod.reviews.length : 0;
+                return avgRating(b) - avgRating(a);
+            } else if (sortOption === "rating-low") {
+                const avgRating = (prod) => prod.reviews && prod.reviews.length > 0 ? prod.reviews.reduce((sum, r) => sum + r.rating, 0) / prod.reviews.length : 0;
+                return avgRating(a) - avgRating(b);
             }
             return 0; // default
         });
@@ -109,6 +115,8 @@ const AllProducts = () => {
                             <option value="low-high">Price: Low to High</option>
                             <option value="high-low">Price: High to Low</option>
                             <option value="newest">Newest Arrivals</option>
+                            <option value="rating-high">Rating: Highest Rated</option>
+                            <option value="rating-low">Rating: Lowest Rated</option>
                         </select>
                     </div>
                 </div>
