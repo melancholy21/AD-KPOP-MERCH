@@ -206,13 +206,15 @@ const Product = () => {
                                 }} className="flex-1 py-3.5 px-4 bg-gray-100 text-gray-800/80 hover:bg-gray-200 rounded-md font-medium text-center whitespace-nowrap transition duration-200">
                                     Add to Cart
                                 </button>
-                                <button onClick={() => {
+                                <button onClick={async () => {
                                     if (!isSignedIn) {
                                         toast.error("Please sign in to purchase items");
                                         return;
                                     }
-                                    addToCart(productData._id);
-                                    router.push('/cart');
+                                    const success = await addToCart(productData._id);
+                                    if (success) {
+                                        router.push('/cart');
+                                    }
                                 }} className="flex-1 py-3.5 px-4 bg-orange-500 text-white hover:bg-orange-600 rounded-md font-medium text-center whitespace-nowrap transition duration-200">
                                     Buy now
                                 </button>

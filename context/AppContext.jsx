@@ -75,10 +75,19 @@ export const AppContextProvider = (props) => {
     const addToCart = async (itemId) => {
         if (!user) {
             toast.error("Please sign in to add items to cart");
-            return;
+            return false;
         }
 
+        const product = products.find(p => p._id === itemId);
+        const availableStock = product && product.stock !== undefined ? product.stock : 50;
         let cartData = structuredClone(cartItems);
+        const currentQty = cartData[itemId] || 0;
+
+        if (currentQty + 1 > availableStock) {
+            toast.error(`Cannot add more. Only ${availableStock} units available in stock.`);
+            return false;
+        }
+
         if (cartData[itemId]) {
             cartData[itemId] += 1;
         }
@@ -86,19 +95,30 @@ export const AppContextProvider = (props) => {
             cartData[itemId] = 1;
         }
         setCartItems(cartData);
+        toast.success("Added to cart!");
 
         try {
             await fetch('/api/cart', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ cartItems: cartData })
-            })
+            });
+            return true;
         } catch (error) {
-            console.error("Error updating cart:", error)
+            console.error("Error updating cart:", error);
+            return false;
         }
     }
 
     const updateCartQuantity = async (itemId, quantity) => {
+        const product = products.find(p => p._id === itemId);
+        const availableStock = product && product.stock !== undefined ? product.stock : 50;
+
+        if (quantity > availableStock) {
+            toast.error(`Cannot set quantity. Only ${availableStock} units available in stock.`);
+            return false;
+        }
+
         let cartData = structuredClone(cartItems);
         if (quantity === 0) {
             delete cartData[itemId];
@@ -113,11 +133,14 @@ export const AppContextProvider = (props) => {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ cartItems: cartData })
-                })
+                });
+                return true;
             } catch (error) {
-                console.error("Error updating cart quantity:", error)
+                console.error("Error updating cart quantity:", error);
+                return false;
             }
         }
+        return true;
     }
 
     const getCartCount = () => {
