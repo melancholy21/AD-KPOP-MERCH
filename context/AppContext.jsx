@@ -19,6 +19,7 @@ export const AppContextProvider = (props) => {
     const { user } = useUser()
 
     const [products, setProducts] = useState([])
+    const [loadingProducts, setLoadingProducts] = useState(true)
     const [userData, setUserData] = useState(false)
     const [isSeller, setIsSeller] = useState(false)
     const [cartItems, setCartItems] = useState({})
@@ -29,6 +30,7 @@ export const AppContextProvider = (props) => {
     const [sortOption, setSortOption] = useState("default");
 
     const fetchProductData = async () => {
+        setLoadingProducts(true)
         try {
             const res = await fetch('/api/products')
             const data = await res.json()
@@ -40,6 +42,8 @@ export const AppContextProvider = (props) => {
         } catch (error) {
             console.error("Error fetching products, falling back to dummy data:", error)
             setProducts(productsDummyData)
+        } finally {
+            setLoadingProducts(false)
         }
     }
 
@@ -229,6 +233,7 @@ export const AppContextProvider = (props) => {
         isSeller, setIsSeller,
         userData, fetchUserData,
         products, fetchProductData,
+        loadingProducts,
         cartItems, setCartItems,
         addToCart, updateCartQuantity,
         getCartCount, getCartAmount,

@@ -1,6 +1,7 @@
 'use client'
 import React from "react";
 import ProductCard from "@/components/ProductCard";
+import ProductCardSkeleton from "@/components/ProductCardSkeleton";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useAppContext } from "@/context/AppContext";
@@ -8,7 +9,7 @@ import { useUser } from "@clerk/nextjs";
 import { useClerk } from "@clerk/nextjs";
 
 const Wishlist = () => {
-    const { products, wishlist } = useAppContext();
+    const { products, loadingProducts, wishlist } = useAppContext();
     const { isSignedIn } = useUser();
     const { openSignIn } = useClerk();
 
@@ -50,7 +51,13 @@ const Wishlist = () => {
                     <p className="text-sm text-gray-500 mt-2">{wishlistedProducts.length} item{wishlistedProducts.length !== 1 ? 's' : ''} saved</p>
                 </div>
 
-                {wishlistedProducts.length > 0 ? (
+                {loadingProducts ? (
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 w-full">
+                        {Array.from({ length: 5 }).map((_, index) => (
+                            <ProductCardSkeleton key={index} />
+                        ))}
+                    </div>
+                ) : wishlistedProducts.length > 0 ? (
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 w-full">
                         {wishlistedProducts.map((product) => (
                             <ProductCard key={product._id} product={product} />

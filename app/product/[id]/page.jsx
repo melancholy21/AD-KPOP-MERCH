@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { assets } from "@/assets/assets";
 import ProductCard from "@/components/ProductCard";
+import ProductCardSkeleton from "@/components/ProductCardSkeleton";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Image from "next/image";
@@ -15,7 +16,7 @@ const Product = () => {
 
     const { id } = useParams();
 
-    const { products, router, addToCart } = useAppContext()
+    const { products, loadingProducts, router, addToCart } = useAppContext()
 
     const { isSignedIn, user } = useUser();
 
@@ -321,7 +322,13 @@ const Product = () => {
                     <div className="w-28 h-0.5 bg-orange-500 mt-2"></div>
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 mt-6 pb-14 w-full">
-                    {products.slice(0, 5).map((product, index) => <ProductCard key={index} product={product} />)}
+                    {loadingProducts
+                        ? Array.from({ length: 5 }).map((_, index) => (
+                            <ProductCardSkeleton key={index} />
+                        ))
+                        : products.slice(0, 5).map((product, index) => (
+                            <ProductCard key={index} product={product} />
+                        ))}
                 </div>
                 <button onClick={() => router.push('/all-products')} className="px-8 py-2 mb-16 border rounded text-gray-500/70 hover:bg-slate-50/90 transition">
                     See more

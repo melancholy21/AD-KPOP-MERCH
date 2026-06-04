@@ -1,6 +1,7 @@
 'use client'
 import React, { useState, useEffect } from "react";
 import ProductCard from "@/components/ProductCard";
+import ProductCardSkeleton from "@/components/ProductCardSkeleton";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useAppContext } from "@/context/AppContext";
@@ -11,6 +12,7 @@ const AllProducts = () => {
 
     const { 
         products, 
+        loadingProducts,
         searchQuery, 
         setSearchQuery, 
         selectedCategory, 
@@ -129,7 +131,13 @@ const AllProducts = () => {
                 )}
 
                 {/* Products Grid */}
-                {paginatedProducts.length > 0 ? (
+                {loadingProducts ? (
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 flex-col items-center gap-6 mt-6 pb-14 w-full">
+                        {Array.from({ length: ITEMS_PER_PAGE }).map((_, index) => (
+                            <ProductCardSkeleton key={index} />
+                        ))}
+                    </div>
+                ) : paginatedProducts.length > 0 ? (
                     <>
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 flex-col items-center gap-6 mt-6 pb-14 w-full">
                             {paginatedProducts.map((product, index) => (
