@@ -21,12 +21,28 @@ const Navbar = () => {
 
   return (
     <nav className="flex items-center justify-between px-6 md:px-16 lg:px-32 py-3 border-b border-gray-300 text-gray-700">
-      <span
-        className="cursor-pointer text-xl md:text-2xl font-bold text-orange-600 tracking-wide"
+      <div
+        className="flex items-center gap-2 cursor-pointer"
         onClick={() => router.push('/')}
       >
-        AD KPOP MERCH
-      </span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="url(#navPurpleGradient)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 md:w-7 md:h-7 shrink-0">
+          <defs>
+            <linearGradient id="navPurpleGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#d8b4fe" />
+              <stop offset="50%" stopColor="#a855f7" />
+              <stop offset="100%" stopColor="#6b21a8" />
+            </linearGradient>
+          </defs>
+          <path d="M12 5a3 3 0 1 1 3 3m-3-3a3 3 0 1 0-3 3m3-3v1M9 8a3 3 0 1 0 3 3M9 8h1m5 0a3 3 0 1 1-3 3m3-3h-1m-2 3v-1"/>
+          <circle cx="12" cy="8" r="2"/>
+          <path d="M12 10v12"/>
+          <path d="M12 22c4.2 0 7-1.667 7-5-4.2 0-7 1.667-7 5Z"/>
+          <path d="M12 22c-4.2 0-7-1.667-7-5 4.2 0 7 1.667 7 5Z"/>
+        </svg>
+        <span className="text-xl md:text-2xl font-bold text-orange-600 tracking-wide select-none">
+          AD KPOP MERCH
+        </span>
+      </div>
       <div className="flex items-center gap-4 lg:gap-8 max-md:hidden">
         <Link href="/" className="hover:text-gray-900 transition">
           Home
